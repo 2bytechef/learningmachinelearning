@@ -2,9 +2,11 @@ from pathlib import Path
 import threading
 import time
 import random
+from typing import List
 
-from chatbots.chatbots import Chatbot
-from chatbots.system_prompt_loader import FormattingInstructions, Personality, Scenario, SystemPromptLoader, ConversationRules
+from conversation_hosts.chatbots import Chatbot
+from conversation_hosts.system_prompt_loader import FormattingInstructions, Personality, Scenario, SystemPromptLoader, ConversationRules
+from conversation_hosts.oracles import HumanOracle, Oracle
 
 # Shared event for signaling the interrupt
 interrupt_event = threading.Event()
@@ -72,16 +74,19 @@ if __name__ == "__main__":
 
 # Conversation Class
 class Conversation:
-    def __init__(self, bots: List[Chatbot], oracle_name: str = "ROSS"):
+    def __init__(self, bots: List[Chatbot], oracle: Oracle):
         self.bots = {bot.name: bot for bot in bots}
-        self.oracle_name = oracle_name
-        self.speaking_queue = queue.Queue()
-        self.current_speaker = None
+        self.oracle = oracle
+        # self.speaking_queue = queue.Queue()
+        # self.current_speaker = None
 
     def start(self):
         while True:
-            self._next_speaker()
-            time.sleep(0.5)
+            # 
+            
+            
+            # self._next_speaker()
+            # time.sleep(0.5)
 
     def _next_speaker(self):
         if self.speaking_queue.empty():
@@ -127,16 +132,20 @@ if __name__ == "__main__":
         formatting_instructions=None,
         scenario=Scenario.CODING_HELP,
         personality=Personality.PERSONAL_ASSISTANT,
+        # history_log_path=Path("./chatbots/chat_history.log")
+    )
+
+    is_streaming = False
+
+    ross = HumanOracle("ROSS")
+    sam = Chatbot(
+        "SAM",
+        sam_prompt,
+        conversation_kwargs={"oracle_name": "ROSS"},    
         history_log_path=Path("./chatbots/chat_history.log")
     )
-    # tony_prompt = system_prompt_loader.load_prompt()
-    # alex_prompt = system_prompt_loader.load_prompt()
 
-    sam = Chatbot("SAM", sam_prompt, conversation_kwargs={"oracle_name": "ROSS"})
-    # tony = Chatbot("TONY", tony_prompt, ["ALEX", "ROSS"])
-    # alex = Chatbot("ALEX", alex_prompt, ["TONY", "ROSS"])
-
-    # conv = Conversation([tony, alex])
+    conv = Conversation([sam], oracle_name="ROSS")
     # try:
     #     conv.send_message("[TONY] {INTERRUPTING} -> `ALEX` Let's discuss this issue.")
     #     conv.start()
