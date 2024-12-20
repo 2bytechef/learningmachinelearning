@@ -24,6 +24,8 @@ import json
 import openai
 from typing import Any, List, Dict, Optional
 
+from apps.conversation_hosts.timers import Timer
+
 
 # ConversationRules Class
 # class ConversationRules:
@@ -46,30 +48,18 @@ from typing import Any, List, Dict, Optional
 # Chatbot Class
 # bot abilities
 # thinking includes reading actions, submitting prompts and adding actions to action queue
-# check for pending thoughts (time based processes)
-    # eg. check bluesky for tweets
-    # read twitch chat (if streaming)
-    # alarms, reminders, screen grabs etc
-# notify of action
-#   will process an action performed by another bot or oracle
-#   if it's a conversation, bot appends to conversation log
-#   depending on the action, if thinking is not paused the bot may start a thinking thread
-#   or directly perform an action if actions are not paused
-# actions are performed in an action thread
-#   - speak
-#   - tweet (bluesky)
-#   - post to discord
-#   - send email
-#   - post on twitch chat
-#   - set an alarm
-#   - take a screen grab
-#   - set a reminder
-# update log
+
 class Chatbot:
-    def __init__(self, name: str, system_prompt: str, conversation_kwargs: Dict[str, Any]):#, other_bots: List[str]):
+    def __init__(
+        self, 
+        name: str, 
+        system_prompt: str, 
+        conversation_kwargs: Dict[str, Any],
+        timers: List[Timer] = [],
+    ):#, other_bots: List[str]):
         self.name = name
         self.system_prompt = system_prompt.format(bot_name=name, **conversation_kwargs)
-        
+        self.timers = timers
         
         # if 'other_bots' in kwargs:
         #     self.other_bots = kwargs['other_bots']
@@ -83,16 +73,18 @@ class Chatbot:
         # self.thinking_thread.start()
         # self.speaking_thread.start()
         
+    # check for pending thoughts (time based processes) -> starts thinking thread
+    # eg. check bluesky for tweets
+    # read twitch chat (if streaming)
+    # alarms, reminders, screen grabs etc
     def check_pending_thoughts(self):
-        pass
-    
-    def _save_to_history(self, message: str):
-        with self.lock:
-            self.conversation_history.append(message)
-            with open(f"{self.name}_history.txt", 'a') as file:
-                file.write(message + '\n')
+        # check timer for thoughts
+        for timer in self.timers:
+            if timer.is_ready():
+                self._think(timer.action)
+                timer.reset()
 
-    def think(self, thought):
+    def _think(self, action):
         pass
         # while not self._stop_event.is_set():
         #     try:
@@ -110,6 +102,15 @@ class Chatbot:
         )
         return response['choices'][0]['message']['content']
 
+    # perform action -> starts action thread
+    #   - speak
+    #   - tweet (bluesky)
+    #   - post to discord
+    #   - send email
+    #   - post on twitch chat (if streaming)
+    #   - set an alarm
+    #   - take a screen grab
+    #   - set a reminder
     def act(self, action):
         pass
         # while not self._stop_event.is_set():
@@ -139,9 +140,21 @@ class Chatbot:
         #     except queue.Empty:
         #         continue
 
+    # notify of action -> starts notification thread
+    #   will process an action performed by another bot or oracle
+    #   if it's a conversation, bot appends to conversation log
+    #   depending on the action, if thinking is not paused the bot may start a thinking thread
+    #   or directly perform an action if actions are not paused
     def notify_of_action(self, action):
         pass
         # self.message_queue.put(message)
+        
+    # update log
+    def _save_to_history(self, message: str):
+        with self.lock:
+            self.conversation_history.append(message)
+            with open(f"{self.name}_history.txt", 'a') as file:
+                file.write(message + '\n')
 
     # def stop(self):
     #     self._stop_event.set()

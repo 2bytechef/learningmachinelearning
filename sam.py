@@ -85,13 +85,14 @@ if __name__ == "__main__":
     sam = Chatbot(
         "SAM",
         sam_prompt,
-        conversation_kwargs={"oracle_name": "ROSS"},    
-        history_log_path=Path("./chatbots/chat_history.log")
+        conversation_kwargs={"oracle_name": ross.name},    
+        # change this to accept directory and look for named log
+        history_log_path=Path("./chatbots/sam_history.log")
     )
 
-    conv = Conversation([sam], oracle_name="ROSS")
-    # try:
-    #     conv.send_message("[TONY] {INTERRUPTING} -> `ALEX` Let's discuss this issue.")
-    #     conv.start()
-    # except KeyboardInterrupt:
-    #     conv.stop_all()
+    conv = Conversation([sam], oracle=ross)
+    try:
+        # conv.send_message("[TONY] {INTERRUPTING} -> `ALEX` Let's discuss this issue.")
+        conv.start()
+    except KeyboardInterrupt:
+        conv.stop_all()
