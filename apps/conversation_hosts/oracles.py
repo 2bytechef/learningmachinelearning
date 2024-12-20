@@ -4,6 +4,10 @@ from conversation_hosts.chatbots import Chatbot
 class Oracle:
     def __init__(self, name: str):
         self.name = name
+    
+    # get the queue of actions to process
+    def check_pending_actions(self):
+        pass
         
 # oracle abilities
 # human oracle:
@@ -19,6 +23,7 @@ class HumanOracle(Oracle):
         
     def speak(self, text: str):
         pass
+    
     
 
 # chatbot oracle:
