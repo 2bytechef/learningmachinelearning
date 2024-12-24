@@ -63,13 +63,13 @@ class ThreadCafe:
     def check_job_clearance(self, job: Job) -> bool:
         if job.priority == Job.Priority.INTERRUPT:
             return (
-                self.thread_shelf.get_thread_count(job.type) > 0
+                self.thread_shelf.get_thread_count(job) > 0
                 or self.thread_shelf.get_all_threads_count() < self.max_threads
             )
         elif job.is_synchronous:
             return self.thread_shelf.get_all_threads_count() < self.max_threads
         else:
-            return self.thread_shelf.get_thread_count(job.type) == 0
+            return self.thread_shelf.get_thread_count(job) == 0
     
     # def check_thread_stop(self, job: Job) -> bool:
         
@@ -85,8 +85,8 @@ class ThreadCafe:
                     self.thread_shelf.stop_thread(job)
                     
                 
-                self.thread_shelf.add_thread(job.type)
-                # job.execute_fn()
+                self.thread_shelf.add_thread(job)
+                job.execute_fn()
             # with self.queue_condition:
             # job.execute_fn()
         finally:
