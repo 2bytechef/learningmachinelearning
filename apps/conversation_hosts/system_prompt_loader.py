@@ -1,6 +1,33 @@
 from enum import Enum
 
 
+# Write a bot that can assist with building a website
+# there is a bot that is writing the actual code and another bot that is evaluating the accuracy of the code
+# both bots will be given the context of the website: A series of still images with interaction instructions
+# the bots will first come up with a set of modules, which we will store in memory in the code:
+# the completed modules and not completed modules will be sent to the bots so they know the progress, as well as the public variables in each module
+# the bots may adjust the given modules and have the ability to delete and add modules, but there must be a consensus between the two
+# every time a module is rewritten, we need to update github with the history of this repository
+# we will give the codebot the context for the existing module in every message.
+# for now we will support html, css, javascript, and python modules. But in the future we will have to add more
+# the oracle will be able to standup a js or python server and the front end server
+
+# the first step in the code is to create a github repo
+
+# the codebot has the following actions:
+# - propose module additions
+# - propose module deletions
+# - propose module adjustments
+# - propose module rewrite
+
+# the evaluation bot (oracle) has the following actions:
+# - accept modult changes
+# - reject module changes
+# - accept module code
+# - request module rewrite
+# - deploy and evaluate code (this is the most complicated action)
+
+
 class ConversationRules(Enum):
     INTERRUPTION_CONVERSATION = """
 You are a chat bot talking to other chat bots. {oracle_name} is not a bot and is a human oracle talking to the bots.
@@ -42,6 +69,10 @@ You will be discussing the best programming language to use for a project.
 
     CODING_HELP = """
 The human oracle is a software engineer who is looking for help with a coding problem.
+"""
+
+    BUILDING_A_WEBSITE = """
+You are helping to build a website for a client.
 """
 
 
