@@ -25,6 +25,7 @@ import openai
 from typing import Any, List, Dict, Optional
 
 from apps.conversation_hosts.timers import Timer
+from common.actors import Actor
 
 
 # ConversationRules Class
@@ -49,7 +50,7 @@ from apps.conversation_hosts.timers import Timer
 # bot abilities
 # thinking includes reading actions, submitting prompts and adding actions to action queue
 
-class Chatbot:
+class Chatbot(Actor):
     def __init__(
         self, 
         name: str, 

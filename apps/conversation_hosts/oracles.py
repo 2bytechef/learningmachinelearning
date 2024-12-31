@@ -1,7 +1,8 @@
+from common.actors import Actor
 from conversation_hosts.chatbots import Chatbot
 
 
-class Oracle:
+class Oracle(Actor):
     def __init__(self, name: str):
         self.name = name
     

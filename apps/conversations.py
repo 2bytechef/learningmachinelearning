@@ -31,6 +31,7 @@ class Conversation:
             # if user inputs a command, process command
             #   pause/resume actions, 
             #   pause/resume thoughts,
+            #   pause/resume both
             #   speak - give commands
             #      return text from speaking thread
             #      analyze for bot names and send to most named bot to think
