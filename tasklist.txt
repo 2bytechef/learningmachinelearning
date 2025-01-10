@@ -1,0 +1,32 @@
+Create audio io scene
+first thought job to hit chatgpt
+first action - text to speech
+create scene base class
+
+interruptions for actions
+create oracle speech action
+create keyboard triggers for oracle speech
+create notify for oracle speech
+observation for screenshot scene
+observation for twitch chat scene
+chatgpt oracle
+create scenes for code repository
+create scene-activity to generate code
+scene-activity to remove code
+scene-activity to deploy code
+set up notify for aws deploy successes
+set up notify for discord messages
+set up notify for twitch streaming changes
+
+
+setup delay for action responses (not all notifies should trigger thought, trigger thoughts on a clock ping basis)
+
+Scene <- actor can observe a scene state or act on a scene
+
+
+ex workflow:
+1. Tell bot to check Twitter (oracle - action)
+2. Bot thinks about my action (thoughts are only public to the oracle)
+3. bot performs observation - check Twitter (observations are only public to the oracle)
+4. performs action response - (actions are available to everyone appointed to a conversation)
+4. all actors on scene are notified of action

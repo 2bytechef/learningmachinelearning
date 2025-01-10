@@ -14,7 +14,7 @@ class ThreadCafe:
     
         @property
         def compatible_job_types(self):
-            return [Job.JobType.THOUGHT, Job.JobType.ACTION, Job.JobType.NOTIFICATION]
+            return [Job.JobType.OBSERVATION, Job.JobType.THOUGHT, Job.JobType.ACTION, Job.JobType.NOTIFICATION]
             
         def add_thread(self, job: Job):
             with self.queue_lock:

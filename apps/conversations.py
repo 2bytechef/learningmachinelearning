@@ -29,7 +29,7 @@ class Conversation:
         while True:
             # check for pending thoughts for bots and oracles
             # if user inputs a command, process command
-            #   pause/resume actions, 
+            #   pause/resume actions,
             #   pause/resume thoughts,
             #   pause/resume both
             #   speak - give commands
@@ -46,7 +46,7 @@ class Conversation:
             #   in conversations with lots of bots, avoid using bots with a lot of pending thoughts
             if not self.are_thoughts_paused:
                 for bot in self.bots.values():
-                    bot.check_pending_thoughts()
+                    bot.check_pending_timers()
                     
             # if conversation is open, allow an action thread to go through
             #   for any bots with queued actions (actions)
@@ -70,9 +70,10 @@ class Conversation:
             #    - if interrupt, remove all other actions of the same type
             #    - if response/wait, remove only the action from the list
             if not self.are_actions_paused:
+                # make a class for actionqueue items  - action, priority, action_type, expiration_time
                 self.action_queue = sorted(self.action_queue, key=lambda x: x.priority)
                 for action in self.action_queue:
-                    self.
+                    # self.
                     
                     # if no other actiosn are going, run action
                     # if other actions are going, only allow interrupting actions to go

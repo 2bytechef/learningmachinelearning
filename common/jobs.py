@@ -3,6 +3,14 @@ from typing import Any
 
 from common.actors import Actor
 
+# Jobs will need to be passed necessary context:
+# - the actor that is thinking
+# - the context of the conversation
+# - the scene they will b e observing
+# e
+# other actors are not made aware of thoughts
+# pass context object with actors and conversation history and scene
+
 
 class Job:
     class Priority:
@@ -11,9 +19,10 @@ class Job:
         WAIT = 3
         
     class JobType(Enum):
-        THOUGHT = 1
-        ACTION = 2
-        NOTIFICATION = 3
+        OBSERVATION = 1
+        THOUGHT = 2
+        ACTION = 3
+        NOTIFICATION = 4
 
     priority: Priority = None
     is_synchronous: bool = False
@@ -29,7 +38,7 @@ class Job:
     def report(self):
         text = (
             f"Actor: {self.actor.name} performed the following action:\n"
-            f"Job Type: {self.type}\nPriority: {self.priority}\nSynchronous: {self.is_synchronous}"
+            f"Job Type: {self.__class__.__name__}\nPriority: {self.priority}\nSynchronous: {self.is_synchronous}"
         )
     
     # def execute_fn(self) -> Any:

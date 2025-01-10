@@ -24,6 +24,7 @@ import json
 import openai
 from typing import Any, List, Dict, Optional
 
+from apps.conversation_hosts.jobs import Speak
 from apps.conversation_hosts.timers import Timer
 from common.actors import Actor
 
@@ -56,11 +57,14 @@ class Chatbot(Actor):
         name: str, 
         system_prompt: str, 
         conversation_kwargs: Dict[str, Any],
-        timers: List[Timer] = [],
+        # timers: List[Timer] = [],
+        kwargs: Dict[str, Any] = {}
     ):#, other_bots: List[str]):
-        self.name = name
+        
+        
+        # self.name = name
         self.system_prompt = system_prompt.format(bot_name=name, **conversation_kwargs)
-        self.timers = timers
+        # self.timers = timers
         
         # if 'other_bots' in kwargs:
         #     self.other_bots = kwargs['other_bots']
@@ -74,26 +78,9 @@ class Chatbot(Actor):
         # self.thinking_thread.start()
         # self.speaking_thread.start()
         
-    # check for pending thoughts (time based processes) -> starts thinking thread
-    # eg. check bluesky for tweets
-    # read twitch chat (if streaming)
-    # alarms, reminders, screen grabs etc
-    def check_pending_thoughts(self):
-        # check timer for thoughts
-        for timer in self.timers:
-            if timer.is_ready():
-                self._think(timer.action)
-                timer.reset()
+        return super().__init__(name, **kwargs)
 
-    def _think(self, action):
-        pass
-        # while not self._stop_event.is_set():
-        #     try:
-        #         message = self.message_queue.get(timeout=1)
-        #         self._save_to_history(message)
-        #     except queue.Empty:
-        #         continue
-        
+
     def _generate_response(self) -> str:
         prompt = self.system_prompt + '\n' + '\n'.join(self.conversation_history)
         # Call OpenAI's API
@@ -103,26 +90,6 @@ class Chatbot(Actor):
         )
         return response['choices'][0]['message']['content']
 
-    # perform action -> starts action thread
-    #   - speak
-    #   - tweet (bluesky)
-    #   - post to discord
-    #   - send email
-    #   - post on twitch chat (if streaming)
-    #   - set an alarm
-    #   - take a screen grab
-    #   - set a reminder
-    def act(self, action):
-        pass
-        # while not self._stop_event.is_set():
-        #     response = self._generate_response()
-        #     if response:
-        #         print(f"{self.name}: {response}")
-        #         self._speak_to_api(response)
-        #         parsed_tag = ConversationRules.parse_message_tag(response)
-        #         if parsed_tag and parsed_tag['action'] == 'INTERRUPTING':
-        #             break
-        #     time.sleep(0.5)  # Allow other threads to interact
 
 
     def _generate_speech(self, text: str):
@@ -174,3 +141,21 @@ class Chatbot(Actor):
 class InterruptingBot:
     def __init__(self, name):
         self.name = name
+
+
+class SamBot(Chatbot):
+    def __init__(self, name, system_prompt, conversation_kwargs):
+        self.name = name
+        
+        
+        timers = [
+            Timer(10, Speak()),
+        ]
+        
+        
+        
+        super().__init__(name, system_prompt, conversation_kwargs, timers)
+        
+    
+    
+    
