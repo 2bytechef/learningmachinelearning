@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Dict
 
 
 # Write a bot that can assist with building a website
@@ -111,6 +112,8 @@ class SystemPromptLoader:
         formatting_instructions: FormattingInstructions,
         scenario: Scenario,
         personality: Personality,
+        bot_name: str,
+        conversation_kwargs: Dict = {},
         # history_log_path: str,
     ) -> str:
         # put together all the values of the enums
@@ -119,7 +122,7 @@ class SystemPromptLoader:
         {formatting_instructions}
         {scenario}
         {personality}
-        """
+        """.format(bot_name=bot_name, **conversation_kwargs)
         
         # Here is the chat history so far:
         # {history_log_path}

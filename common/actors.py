@@ -1,6 +1,6 @@
 from typing import List
 
-from apps.conversation_hosts.timers import Timer
+from common.timers import Timer
 from common.jobs import Action, Job, Thought
 
 
@@ -57,6 +57,9 @@ class Actor:
     #   - take a screen grab
     #   - set a reminder
     def _act(self, action: Action):
+        # we will pass the context to the action,
+        # this should include conversation information, information about the acting actor
+        # the action should return a trigger which we can add to our queue
         pass
         # while not self._stop_event.is_set():
         #     response = self._generate_response()

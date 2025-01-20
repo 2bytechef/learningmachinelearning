@@ -25,8 +25,10 @@ import openai
 from typing import Any, List, Dict, Optional
 
 from apps.conversation_hosts.jobs import Speak
-from apps.conversation_hosts.timers import Timer
+from apps.conversation_hosts.system_prompt_loader import ConversationRules, Personality, SystemPromptLoader
+from common.timers import Timer
 from common.actors import Actor
+from common.triggers import Trigger
 
 
 # ConversationRules Class
@@ -54,16 +56,28 @@ from common.actors import Actor
 class Chatbot(Actor):
     def __init__(
         self, 
-        name: str, 
-        system_prompt: str, 
-        conversation_kwargs: Dict[str, Any],
-        # timers: List[Timer] = [],
-        kwargs: Dict[str, Any] = {}
+        bot_name: str, 
+        personality: Personality,
+        conversation_kwargs: Dict[str, Any] = {},
+        history_log_path: Optional[str] = None,
+        timers: List[Timer] = [],
+        *args: Any,
+        **kwargs: Dict[str, Any] = {},
     ):#, other_bots: List[str]):
+        conversation_rules = conversation_kwargs.pop("conversation_rules", None)
+        formatting_instructions = conversation_kwargs.pop("formatting_instructions", None)
+        scenario = conversation_kwargs.pop("scenario", None)
         
-        
-        # self.name = name
-        self.system_prompt = system_prompt.format(bot_name=name, **conversation_kwargs)
+        prompt = SystemPromptLoader.load_prompt(
+            conversation_rules=conversation_rules,
+            formatting_instructions=formatting_instructions,
+            scenario=scenario,
+            personality=personality,
+            history_log_path=history_log_path,
+            bot_name=bot_name,
+            **conversation_kwargs,
+        )
+        self.system_prompt = prompt.format(bot_name=bot_name, **conversation_kwargs)
         # self.timers = timers
         
         # if 'other_bots' in kwargs:
@@ -78,7 +92,7 @@ class Chatbot(Actor):
         # self.thinking_thread.start()
         # self.speaking_thread.start()
         
-        return super().__init__(name, **kwargs)
+        return super().__init__(name=bot_name, timers=timers, *args, **kwargs)
 
 
     def _generate_response(self) -> str:
@@ -142,19 +156,27 @@ class InterruptingBot:
     def __init__(self, name):
         self.name = name
 
+    #     self, 
+    #     bot_name: str, 
+    #     personality: Personality,
+    #     conversation_kwargs: Dict[str, Any] = {},
+    #     history_log_path: Optional[str] = None,
+    #     timers: List[Timer] = [],
+    #     *args: Any,
+    #     **kwargs: Dict[str, Any] = {},
+    # ):#, other_bots: List[str]):
 
 class SamBot(Chatbot):
-    def __init__(self, name, system_prompt, conversation_kwargs):
-        self.name = name
-        
-        
+    def __init__(
+        self, *args, **kwargs: Dict[str, Any]
+        # bot_name,
+        # conversation_kwargs: Dict
+    ):#, system_prompt, conversation_kwargs):
         timers = [
             Timer(10, Speak()),
         ]
         
-        
-        
-        super().__init__(name, system_prompt, conversation_kwargs, timers)
+        super().__init__(timers=timers, *args, **kwargs)
         
     
     

@@ -27,6 +27,8 @@ class Conversation:
 
     def start(self):
         while True:
+            
+            #Capture all input as a list - send to oracle
             # check for pending thoughts for bots and oracles
             # if user inputs a command, process command
             #   pause/resume actions,

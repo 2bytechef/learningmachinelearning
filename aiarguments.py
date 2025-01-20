@@ -3,8 +3,8 @@ import threading
 import time
 import random
 
-from chatbots.chatbots import Chatbot
-from chatbots.system_prompt_loader import FormattingInstructions, Personality, Scenario, SystemPromptLoader, ConversationRules
+from apps.conversation_hosts.chatbots import SamBot
+from apps.conversation_hosts.system_prompt_loader import ConversationRules, Personality, Scenario, SystemPromptLoader
 
 # Shared event for signaling the interrupt
 interrupt_event = threading.Event()
@@ -122,17 +122,33 @@ class Conversation:
 
 # Example Usage
 if __name__ == "__main__":
+    SAMBOT_KEY = "sam_bot"
+    bot_names = {
+        SAMBOT_KEY: "SAM",
+    }
+    
     sam_prompt = SystemPromptLoader.load_prompt(
         conversation_rules=ConversationRules.PERSONAL_ASSISTANT,
         formatting_instructions=None,
         scenario=Scenario.CODING_HELP,
-        personality=Personality.PERSONAL_ASSISTANT,
-        history_log_path=Path("./chatbots/chat_history.log")
     )
+    conversation_kwargs = {
+        "formatting_instructions": None,
+        "conversation_rules": ConversationRules.PERSONAL_ASSISTANT,
+        "formatting_instructions": None,
+        "scenario": Scenario.CODING_HELP,
+        "oracle_name": "ROSS",
+        "bot_names": bot_names,
+    }
     # tony_prompt = system_prompt_loader.load_prompt()
     # alex_prompt = system_prompt_loader.load_prompt()
 
-    sam = Chatbot("SAM", sam_prompt, conversation_kwargs={"oracle_name": "ROSS"})
+    sam = SamBot(
+        bot_name=bot_names[SAMBOT_KEY],
+        personality=Personality.PERSONAL_ASSISTANT,
+        conversation_kwargs=conversation_kwargs,
+        history_log_path=Path("./chatbots/chat_history.log")
+    )
     # tony = Chatbot("TONY", tony_prompt, ["ALEX", "ROSS"])
     # alex = Chatbot("ALEX", alex_prompt, ["TONY", "ROSS"])
 

@@ -1,5 +1,6 @@
 from typing import Any
 from common.jobs import Action
+from common.triggers import Trigger
 
 
 class Speak(Action):

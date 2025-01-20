@@ -1,7 +1,8 @@
 from enum import Enum
-from typing import Any
+from typing import Any, Optional
 
 from common.actors import Actor
+from common.triggers import Trigger
 
 # Jobs will need to be passed necessary context:
 # - the actor that is thinking
@@ -10,6 +11,7 @@ from common.actors import Actor
 # e
 # other actors are not made aware of thoughts
 # pass context object with actors and conversation history and scene
+# return report =
 
 
 class Job:
@@ -27,13 +29,20 @@ class Job:
     priority: Priority = None
     is_synchronous: bool = False
     
-    def __init__(self, actor: Actor, priority: Priority, is_synchronous: bool = False):
-        self.job_priority = priority
-        self.is_synchronous = is_synchronous
-        self.actor = actor
+    def __init__(
+        self,#, actor: Actor, priority: Priority, is_synchronous: bool = False
+        # , trigger: Optional[Trigger] = None
+        trigger: Job = None,
+    ):
+        # self.job_priority = priority
+        # self.is_synchronous = is_synchronous
+        # self.actor = actor
+        self.trigger = trigger
         
+    # we need to pass context and read result
     def __call__(self, check_stop_fn: function, *args: Any, **kwds: Any) -> Any:
         self.check_stop = check_stop_fn
+        self.context = context
         
     def report(self):
         text = (
