@@ -15,13 +15,14 @@ from apps.conversation_hosts.system_prompt_loader import ConversationRules
 class Conversation:
     is_conversation_paused = False
     are_actions_paused = False
-    are_thoughts_paused = False
-    
+    are_timers_paused = False
+
     action_queue: List[Action] = []
     
     def __init__(self, bots: List[Chatbot], oracle: Oracle):
         self.bots = {bot.name: bot for bot in bots}
         self.oracle = oracle
+        self.actor_list = bots.values() + [oracle]
         # self.speaking_queue = queue.Queue()
         # self.current_speaker = None
 
@@ -29,7 +30,7 @@ class Conversation:
         while True:
             
             #Capture all input as a list - send to oracle
-            # check for pending thoughts for bots and oracles
+            # check for pending timers for bots and oracles
             # if user inputs a command, process command
             #   pause/resume actions,
             #   pause/resume thoughts,
@@ -46,9 +47,12 @@ class Conversation:
             #   spin up a new thinking thread for the bot with the pending thought
             #   after thinking threads return, queue actions
             #   in conversations with lots of bots, avoid using bots with a lot of pending thoughts
-            if not self.are_thoughts_paused:
+            if not self.are_timers_paused:
                 for bot in self.bots.values():
                     bot.check_pending_timers()
+            else:
+                for bot in self.bots.values():
+                    bot.shift_timers()
                     
             # if conversation is open, allow an action thread to go through
             #   for any bots with queued actions (actions)
